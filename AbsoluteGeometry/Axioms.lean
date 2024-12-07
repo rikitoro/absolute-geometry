@@ -117,7 +117,7 @@ end
 -- C4 線分の複写
 axiom axiom_C4 :
   ∀ a b c p,
-  a ≠ b ∧ c ≠ p → ∃ d, ∀ d', B p c d' ∧ D c d' a b → d = d'
+  a ≠ b ∧ c ≠ p → ∃ d, ∀ d', B p c d' ∧ D c d' a b ↔ d = d'
 
 -- C5 線分の和
 axiom axiom_C5 :
