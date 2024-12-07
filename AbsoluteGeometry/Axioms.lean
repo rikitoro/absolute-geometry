@@ -20,7 +20,7 @@ def Col (a b c : Point) := B a b c ∨ B b c a ∨ B c a b
 def Diff (a b c : Point) := a ≠ b ∧ b ≠ c ∧ c ≠ a
 
 
-section
+section axioms_A
 /-
   A 結合の公理群
 -/
@@ -35,9 +35,9 @@ axiom axiom_A2 :
   ∀ a b c d,
   Col a b c ∧ Col a b d → Col a c d ∧ Col b c d
 
-end
+end axioms_A
 
-section
+section axioms_B
 /-
   B 間の公理群
 -/
@@ -67,9 +67,9 @@ axiom axiom_B5 :
   B a q b ∧ ¬ Col a b c ∧ ¬ Col p q a ∧ ¬ Col p q b ∧ ¬ Col p q c
   → ∃ x, B p q x ∧ (B a x c ∨ B b x c)
 
-end
+end axioms_B
 
-section
+section axioms_C
 /-
   C 合同の公理群
 -/
@@ -117,7 +117,7 @@ end
 -- C4 線分の複写
 axiom axiom_C4 :
   ∀ a b c p,
-  a ≠ b ∧ c ≠ p → ∃ d, ∀ d', B p c d ∧ D c d a b → d = d'
+  a ≠ b ∧ c ≠ p → ∃ d, ∀ d', B p c d' ∧ D c d' a b → d = d'
 
 -- C5 線分の和
 axiom axiom_C5 :
@@ -129,14 +129,14 @@ axiom axiom_C5 :
 
 -- C6 5辺定理
 
-end
+end axioms_C
 
-section
+section axioms_CC
 /-
   連続性公理
 -/
 -- CC 円円交差
-end
+end axioms_CC
 
 
 
