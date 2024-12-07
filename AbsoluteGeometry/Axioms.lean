@@ -8,9 +8,9 @@ axiom B : Point → Point → Point → Prop
 axiom D : Point → Point → Point → Point → Prop
 
 -- B a b c を a-b-c と表示 // ToDo 記法の結合優先度を適切に設定する必要あり
-notation:65 a "-" b:66 "-" c:66 => B a b c
+-- notation:65 a "-" b:65 "-" c:65 => B a b c
 -- D a b c d を ⟨a,b⟩ ≡ ⟨c,d⟩ と表示 // ToDo 記法の結合優先度を適切に設定する必要あり
-notation:65 a "-" b :67" ≡ " c:66 "-" d => D a b c d
+notation:65 a "-" b :67" ≡ " c:66 "-" d:66 => D a b c d
 
 
 -- 共線的 (collinear)
@@ -91,21 +91,21 @@ axiom axiom_C3 :
 
 
 section
--- 線分の合同についての定理群
-lemma Congr.refl : ∀ a b, a-b ≡ a-b := by
+-- 線分の合同の同値性についての定理群
+theorem Congr.refl : ∀ a b, a-b ≡ a-b := by
   intro a b
   apply axiom_C3 b a
   . apply axiom_C2
   . apply axiom_C2
 
-lemma Congr.symm : ∀ a b c d, (a-b ≡ c-d) → c-d ≡ a-b := by
+theorem Congr.symm : ∀ a b c d, a-b ≡ c-d → c-d ≡ a-b := by
   intro a b c d h
   apply axiom_C3 a b
   . exact h
   . apply Congr.refl
 
-lemma Congr.trans :
-  ∀ a b c d p q, (a-b ≡ c-d) ∧ (c-d ≡ p-q) → a-b ≡ p-q := by
+theorem Congr.trans :
+  ∀ a b c d p q, a-b ≡ c-d ∧ c-d ≡ p-q → a-b ≡ p-q := by
   intro a b c d p q ⟨h1, h2⟩
   apply axiom_C3 c d
   . apply Congr.symm
@@ -126,8 +126,17 @@ axiom axiom_C5 :
   D a₁ b₁ a₂ b₂ ∧ D b₁ c₁ b₂ c₂ → D a₁ c₁ a₂ c₂
 
 -- 定義 三角形の合同
+-- Todo : a b c が三角形をなすという Diff a b c ∧ ¬ Col a b c の前提は必要かどうか要検討
+def CongrTriangles (a₁ b₁ c₁ a₂ b₂ c₂ : Point) :=
+  D a₁ b₁ a₂ b₂ ∧ D b₁ c₁ b₂ c₂ ∧ D c₁ a₁ c₂ a₂
+
+notation "△" a b c " ≡ " "△" p q r => CongrTriangles a b c p q r
 
 -- C6 5辺定理
+axiom axiom_C6 :
+  ∀ a b c d p q r s,
+  CongrTriangles a b c p q r → B a b d → B p q s → D b d q s
+  → CongrTriangles b d c q s r
 
 end axioms_C
 
@@ -137,9 +146,6 @@ section axioms_CC
 -/
 -- CC 円円交差
 end axioms_CC
-
-
-
 
 ----
 #print axiom_A1
@@ -154,3 +160,14 @@ end axioms_CC
 #print axiom_C3
 #print axiom_C4
 #print axiom_C5
+#print axiom_C6
+
+
+section notationTest
+variable (a b c d : Point)
+#check a-b ≡ a-b
+
+-- #check a-c-b -- NG
+
+-- #check △a b c ≡ △a b c -- NG, ToDo 要見直し
+end notationTest
