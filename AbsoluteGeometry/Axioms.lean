@@ -108,12 +108,8 @@ axiom axiom_C4 :
 
 -- C5 線分の和
 axiom axiom_C5 :
-  ∀ a₁ b₁ c₁ a₂ b₂ c₂,
-  B a₁ b₁ c₁ ∧ B a₂ b₂ c₂ →
-  D a₁ b₁ a₂ b₂ ∧ D b₁ c₁ b₂ c₂ → D a₁ c₁ a₂ c₂
-
-
-
+  ∀ a b c p q r,
+  B a b c ∧ B p q r → D a b p q ∧ D b c q r → D a c p r
 
 -- C6 5辺定理
 axiom axiom_C6 :
