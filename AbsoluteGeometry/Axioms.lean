@@ -1,5 +1,3 @@
-import AbsoluteGeometry.lemma
-
 -- 点の型
 axiom Point : Type
 -- Betweenness : B a b c - 点 b が線分 ab の間にある
@@ -8,9 +6,9 @@ axiom B : Point → Point → Point → Prop
 axiom D : Point → Point → Point → Point → Prop
 
 -- B a b c を a-b-c と表示 // ToDo 記法の結合優先度を適切に設定する必要あり
--- notation:65 a "-" b:65 "-" c:65 => B a b c
--- D a b c d を ⟨a,b⟩ ≡ ⟨c,d⟩ と表示 // ToDo 記法の結合優先度を適切に設定する必要あり
-notation:65 a "-" b :67" ≡ " c:66 "-" d:66 => D a b c d
+notation:75 a:76 "-" b:76 "-" c:76 => B a b c
+-- D a b c d を a-b ≡ c-d と表示 // ToDo 記法の結合優先度を適切に設定する必要あり
+notation:75 a:76 "-" b:76 " ≡ " c:76 "-" d:76 => D a b c d
 
 
 -- 共線的 (collinear)
@@ -89,6 +87,45 @@ axiom axiom_C3 :
   ∀ a b p q r s,
   D a b p q → D a b r s → D p q r s
 
+-- C4 線分の複写
+axiom axiom_C4 :
+  ∀ a b c p,
+  a ≠ b ∧ c ≠ p → ∃ d, ∀ d', B p c d' ∧ D c d' a b ↔ d = d'
+
+-- C5 線分の和
+axiom axiom_C5 :
+  ∀ a₁ b₁ c₁ a₂ b₂ c₂,
+  B a₁ b₁ c₁ ∧ B a₂ b₂ c₂ →
+  D a₁ b₁ a₂ b₂ ∧ D b₁ c₁ b₂ c₂ → D a₁ c₁ a₂ c₂
+
+-- 定義 三角形の合同
+-- Todo : a b c が三角形をなすという Diff a b c ∧ ¬ Col a b c の前提は必要かどうか要検討
+def CongrTriangles (a₁ b₁ c₁ a₂ b₂ c₂ : Point) :=
+  D a₁ b₁ a₂ b₂ ∧ D b₁ c₁ b₂ c₂ ∧ D c₁ a₁ c₂ a₂
+
+-- CongrTriangles a b c p q r を ⟨a, b, c⟩ ≡ ⟨p, q, r⟩ と表記
+notation:75 "⟨" a:76 "," b:76 "," c:76 "⟩" " ≡ " "⟨" p:76 "," q:76 "," r:76 "⟩"
+  => CongrTriangles a b c p q r
+
+
+
+-- C6 5辺定理
+axiom axiom_C6 :
+  ∀ a b c d p q r s,
+  CongrTriangles a b c p q r → B a b d → B p q s → D b d q s
+  → CongrTriangles b d c q s r
+
+end axioms_C
+
+section axioms_CC
+/-
+  連続性公理
+-/
+-- CC 円円交差
+end axioms_CC
+
+
+------------------------------------
 
 section
 -- 線分の合同の同値性についての定理群
@@ -114,40 +151,35 @@ theorem Congr.trans :
 
 end
 
--- C4 線分の複写
-axiom axiom_C4 :
-  ∀ a b c p,
-  a ≠ b ∧ c ≠ p → ∃ d, ∀ d', B p c d' ∧ D c d' a b ↔ d = d'
-
--- C5 線分の和
-axiom axiom_C5 :
-  ∀ a₁ b₁ c₁ a₂ b₂ c₂,
-  B a₁ b₁ c₁ ∧ B a₂ b₂ c₂ →
-  D a₁ b₁ a₂ b₂ ∧ D b₁ c₁ b₂ c₂ → D a₁ c₁ a₂ c₂
-
--- 定義 三角形の合同
--- Todo : a b c が三角形をなすという Diff a b c ∧ ¬ Col a b c の前提は必要かどうか要検討
-def CongrTriangles (a₁ b₁ c₁ a₂ b₂ c₂ : Point) :=
-  D a₁ b₁ a₂ b₂ ∧ D b₁ c₁ b₂ c₂ ∧ D c₁ a₁ c₂ a₂
-
-notation "△" a b c " ≡ " "△" p q r => CongrTriangles a b c p q r
-
--- C6 5辺定理
-axiom axiom_C6 :
-  ∀ a b c d p q r s,
-  CongrTriangles a b c p q r → B a b d → B p q s → D b d q s
-  → CongrTriangles b d c q s r
-
-end axioms_C
-
-section axioms_CC
-/-
-  連続性公理
--/
--- CC 円円交差
-end axioms_CC
 
 ----
+
+section notationTest
+variable (a b c d p q r: Point)
+
+
+#check a-b ≡ a-b
+#check a-c-b
+#check ⟨a,b,c⟩ ≡ ⟨p, q, r⟩
+
+
+example :
+  ∀ a b c p,
+  a ≠ b ∧ c ≠ p → ∃ d, ∀ d', p-c-d' ∧ c-d' ≡ a-b ↔ d = d' := by
+  exact axiom_C4
+
+example :
+  ∀ a b c p q r,
+  a-b-c ∧ p-q-r →
+  a-b ≡ p-q ∧ b-c ≡ q-r → a-c ≡ p-r := by
+  exact axiom_C5
+
+example :
+  ∀ a b c d p q r s,
+  ⟨a, b, c⟩ ≡ ⟨p, q, r⟩ → a-b-d → p-q-s → b-d ≡ q-s
+  → ⟨b, d, c⟩ ≡ ⟨q, s, r⟩ := by
+  exact axiom_C6
+
 #print axiom_A1
 #print axiom_A2
 #print axiom_B1
@@ -162,12 +194,4 @@ end axioms_CC
 #print axiom_C5
 #print axiom_C6
 
-
-section notationTest
-variable (a b c d : Point)
-#check a-b ≡ a-b
-
--- #check a-c-b -- NG
-
--- #check △a b c ≡ △a b c -- NG, ToDo 要見直し
 end notationTest
