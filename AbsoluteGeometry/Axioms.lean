@@ -1,3 +1,5 @@
+section basic_relations
+
 -- 点の型
 axiom Point : Type
 -- Betweenness : B a b c - 点 b が線分 ab の間にある
@@ -5,9 +7,9 @@ axiom B : Point → Point → Point → Prop
 -- congruence : D a b c d - 線分 ab と線分 cd は合同である
 axiom D : Point → Point → Point → Point → Prop
 
--- D a b c d を a-b ≡ c-d と表示 // ToDo 記法の結合優先度を適切に設定する必要あり
-notation:75 a:76 "-" b:76 " ≡ " c:76 "-" d:76 => D a b c d
+end basic_relations
 
+section auxiliary_defs_notations
 
 -- 共線的 (collinear)
 def Col (a b c : Point) := B a b c ∨ B b c a ∨ B c a b
@@ -15,6 +17,20 @@ def Col (a b c : Point) := B a b c ∨ B b c a ∨ B c a b
 -- 相異なる3点
 def Diff (a b c : Point) := a ≠ b ∧ b ≠ c ∧ c ≠ a
 
+-- 三角形の合同
+-- TCongr a b c p q r -- △abc ≡ △pqr
+-- Todo : a b c が三角形をなすという Diff a b c ∧ ¬ Col a b c の前提は必要かどうか要検討
+def TCongr (a b c p q r : Point) :=
+  D a b p q ∧ D b c q r ∧ D c a r p
+
+-- D a b c d を a-b ≡ c-d と表示 // ToDo 記法の結合優先度を適切に設定する必要あり
+notation:75 a:76 "-" b:76 " ≡ " c:76 "-" d:76 => D a b c d
+
+-- TCongr a b c p q r を ⟨a, b, c⟩ ≡ ⟨p, q, r⟩ と表記
+notation:75 "⟨" a:76 "," b:76 "," c:76 "⟩" " ≡ " "⟨" p:76 "," q:76 "," r:76 "⟩"
+  => TCongr a b c p q r
+
+end auxiliary_defs_notations
 
 section axioms_A
 /-
@@ -96,22 +112,14 @@ axiom axiom_C5 :
   B a₁ b₁ c₁ ∧ B a₂ b₂ c₂ →
   D a₁ b₁ a₂ b₂ ∧ D b₁ c₁ b₂ c₂ → D a₁ c₁ a₂ c₂
 
--- 定義 三角形の合同
--- Todo : a b c が三角形をなすという Diff a b c ∧ ¬ Col a b c の前提は必要かどうか要検討
-def CongrTriangles (a₁ b₁ c₁ a₂ b₂ c₂ : Point) :=
-  D a₁ b₁ a₂ b₂ ∧ D b₁ c₁ b₂ c₂ ∧ D c₁ a₁ c₂ a₂
-
--- CongrTriangles a b c p q r を ⟨a, b, c⟩ ≡ ⟨p, q, r⟩ と表記
-notation:75 "⟨" a:76 "," b:76 "," c:76 "⟩" " ≡ " "⟨" p:76 "," q:76 "," r:76 "⟩"
-  => CongrTriangles a b c p q r
 
 
 
 -- C6 5辺定理
 axiom axiom_C6 :
   ∀ a b c d p q r s,
-  CongrTriangles a b c p q r → B a b d → B p q s → D b d q s
-  → CongrTriangles b d c q s r
+  TCongr a b c p q r → B a b d → B p q s → D b d q s
+  → TCongr b d c q s r
 
 end axioms_C
 
@@ -134,7 +142,6 @@ axiom axiom_CC :
   ∀ c q p r c' a b,
   B c a p ∧ B c p r ∧ D c a c q ∧ D c b c r ∧ D c' a c' b
   → ∃ x, D c x c p ∧ D c' a c' x
-
 
 end axioms_CC
 
@@ -171,9 +178,13 @@ section notationTest
 variable (a b c d p q r: Point)
 
 
-#check a-b ≡ a-b
+#check a-b ≡ c-d
+#check D a b c d
+
 #check B a c b
+
 #check ⟨a,b,c⟩ ≡ ⟨p, q, r⟩
+#check TCongr a b c p q r
 
 
 example :
