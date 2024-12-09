@@ -5,8 +5,6 @@ axiom B : Point → Point → Point → Prop
 -- congruence : D a b c d - 線分 ab と線分 cd は合同である
 axiom D : Point → Point → Point → Point → Prop
 
--- B a b c を a-b-c と表示 // ToDo 記法の結合優先度を適切に設定する必要あり
-notation:75 a:76 "-" b:76 "-" c:76 => B a b c
 -- D a b c d を a-b ≡ c-d と表示 // ToDo 記法の結合優先度を適切に設定する必要あり
 notation:75 a:76 "-" b:76 " ≡ " c:76 "-" d:76 => D a b c d
 
@@ -122,6 +120,22 @@ section axioms_CC
   連続性公理
 -/
 -- CC 円円交差
+-- 与えられた 2 円 A, B において, もし B が A の内側の点を含み,
+-- また A の外側の点をも含むならば, A と B は交点を持つ．
+
+/- memo
+  円B c : 中心, p : 円周上の点, q : 円Bの内部の点, r : 円Bの外部の点
+    B c q p ∧ B c p r ∧ c a ≡ c q -- a が円Bの内側の点
+    B c q p ∧ B c p r ∧ c b ≡ c r -- b が円Bの外側の点
+  円A c' : 中心, a b : 円周上の点
+    B c q p ∧ B c p r ∧ c-a ≡ c-a ∧ c-b ≡ c-b ≡ c-b ∧ c'-a ≡ c'-b
+-/
+axiom axiom_CC :
+  ∀ c q p r c' a b,
+  B c a p ∧ B c p r ∧ D c a c q ∧ D c b c r ∧ D c' a c' b
+  → ∃ x, D c x c p ∧ D c' a c' x
+
+
 end axioms_CC
 
 
@@ -151,7 +165,6 @@ theorem Congr.trans :
 
 end
 
-
 ----
 
 section notationTest
@@ -159,26 +172,33 @@ variable (a b c d p q r: Point)
 
 
 #check a-b ≡ a-b
-#check a-c-b
+#check B a c b
 #check ⟨a,b,c⟩ ≡ ⟨p, q, r⟩
 
 
 example :
   ∀ a b c p,
-  a ≠ b ∧ c ≠ p → ∃ d, ∀ d', p-c-d' ∧ c-d' ≡ a-b ↔ d = d' := by
+  a ≠ b ∧ c ≠ p → ∃ d, ∀ d', B p c d' ∧ c-d' ≡ a-b ↔ d = d' := by
   exact axiom_C4
 
 example :
   ∀ a b c p q r,
-  a-b-c ∧ p-q-r →
+  B a b c ∧ B p q r →
   a-b ≡ p-q ∧ b-c ≡ q-r → a-c ≡ p-r := by
   exact axiom_C5
 
 example :
   ∀ a b c d p q r s,
-  ⟨a, b, c⟩ ≡ ⟨p, q, r⟩ → a-b-d → p-q-s → b-d ≡ q-s
+  ⟨a, b, c⟩ ≡ ⟨p, q, r⟩ → B a b d → B p q s → b-d ≡ q-s
   → ⟨b, d, c⟩ ≡ ⟨q, s, r⟩ := by
   exact axiom_C6
+
+
+example :
+  ∀ c q p r c' a b,
+  B c a p ∧ B c p r ∧ c-a ≡ c-q ∧ c-b ≡ c-r ∧ c'-a ≡ c'-b
+  → ∃ x, c-x ≡ c-p ∧ c'-a ≡ c'-x := by
+  exact axiom_CC
 
 #print axiom_A1
 #print axiom_A2
@@ -193,5 +213,6 @@ example :
 #print axiom_C4
 #print axiom_C5
 #print axiom_C6
+#print axiom_CC
 
 end notationTest
