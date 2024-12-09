@@ -26,8 +26,8 @@ axiom axiom_T4 :
 
 axiom axiom_T5 : -- five segments
   ∀ a b c d p q r s,
-  a ≠ b ∧ B a b c ∧ B p q r ∧
-  a-b ≡ p-q ∧ b-c ≡ q-r ∧ a-d ≡ p-s ∧ b-d ≡ q-s
+  a ≠ b ∧ B a b c ∧ B p q r
+  ∧ a-b ≡ p-q ∧ b-c ≡ q-r ∧ a-d ≡ p-s ∧ b-d ≡ q-s
   → c-d ≡ r-s
 
 axiom axiom_T6 :

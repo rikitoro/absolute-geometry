@@ -19,7 +19,6 @@ def Diff (a b c : Point) := a ≠ b ∧ b ≠ c ∧ c ≠ a
 
 -- 三角形の合同
 -- TCongr a b c p q r -- △abc ≡ △pqr
--- Todo : a b c が三角形をなすという Diff a b c ∧ ¬ Col a b c の前提は必要かどうか要検討
 def TCongr (a b c p q r : Point) :=
   D a b p q ∧ D b c q r ∧ D c a r p
 
@@ -32,10 +31,7 @@ notation:75 "⟨" a:76 "," b:76 "," c:76 "⟩" " ≡ " "⟨" p:76 "," q:76 "," r
 
 end auxiliary_defs_notations
 
-section axioms_A
-/-
-  A 結合の公理群
--/
+section axioms_A -- A 結合の公理群
 
 -- A1 共線的でない 3 点が存在する
 axiom axiom_A1 :
@@ -49,10 +45,7 @@ axiom axiom_A2 :
 
 end axioms_A
 
-section axioms_B
-/-
-  B 間の公理群
--/
+section axioms_B -- B 間の公理群
 
 -- B1 点 b が点 a と点 c の間にあるならば a, b, c は異なる 3 点である
 axiom axiom_B1 :
@@ -81,10 +74,7 @@ axiom axiom_B5 :
 
 end axioms_B
 
-section axioms_C
-/-
-  C 合同の公理群
--/
+section axioms_C -- C 合同の公理群
 
 -- C1
 axiom axiom_C1 :
@@ -119,30 +109,30 @@ axiom axiom_C6 :
 
 end axioms_C
 
-section axioms_CC
+section axioms_CC -- 連続性公理
 /-
-  連続性公理
+  CC 円円交差
+    与えられた 2 円 A, B において, もし B が A の内側の点を含み,
+    また A の外側の点をも含むならば, A と B は交点を持つ．
 -/
--- CC 円円交差
--- 与えられた 2 円 A, B において, もし B が A の内側の点を含み,
--- また A の外側の点をも含むならば, A と B は交点を持つ．
 
 /- memo
-  円B c : 中心, p : 円周上の点, q : 円Bの内部の点, r : 円Bの外部の点
-    B c q p ∧ B c p r ∧ c a ≡ c q -- a が円Bの内側の点
-    B c q p ∧ B c p r ∧ c b ≡ c r -- b が円Bの外側の点
-  円A c' : 中心, a b : 円周上の点
-    B c q p ∧ B c p r ∧ c-a ≡ c-a ∧ c-b ≡ c-b ≡ c-b ∧ c'-a ≡ c'-b
+  円A : c を中心とする半径 cp の円
+    B c q p ∧ c-a ≡ c-q -- a が円 A の内側の点 (i.e. ca < cp)
+    B c p r ∧ c-b ≡ c-r -- b が円 A の外側の点 (i.e. cb > cp)
+  円B c' を中心とし円周上に点 a, b を含む (半径 c'a = c'b)
+    c'-a ≡ c'-b
 -/
+
 axiom axiom_CC :
   ∀ c q p r c' a b,
-  B c a p ∧ B c p r ∧ D c a c q ∧ D c b c r ∧ D c' a c' b
+  B c q p ∧ B c p r ∧ D c a c q ∧ D c b c r ∧ D c' a c' b
   → ∃ x, D c x c p ∧ D c' a c' x
 
 end axioms_CC
 
 
-------------------------------------
+-- ----------------------------------
 
 section
 -- 線分の合同の同値性についての定理群
@@ -203,7 +193,7 @@ example :
 
 example :
   ∀ c q p r c' a b,
-  B c a p ∧ B c p r ∧ c-a ≡ c-q ∧ c-b ≡ c-r ∧ c'-a ≡ c'-b
+  B c q p ∧ B c p r ∧ c-a ≡ c-q ∧ c-b ≡ c-r ∧ c'-a ≡ c'-b
   → ∃ x, c-x ≡ c-p ∧ c'-a ≡ c'-x := by
   exact axiom_CC
 
